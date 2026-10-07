@@ -98,3 +98,9 @@ for examples.
 
 For tests, private read-only save checks, executable builds, and release
 instructions, see the [Detailed Reference](docs/DETAILED_REFERENCE.md#validation).
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+Third-party dependencies retain their own licenses. This license does not cover
+Enshrouded game assets or trademarks; this is an unofficial tool.
