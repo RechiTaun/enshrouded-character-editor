@@ -45,8 +45,9 @@ python -m venv .venv
 
 Alternatively, pass the full path to a `characters-index` or character snapshot
 as the last argument. **Find saves** discovers Steam's registered install and
-the local `Saved Games\Enshrouded` directory. If discovery fails, use **Open
-active index** and choose the file manually.
+the local `Saved Games\Enshrouded` directory. If discovery fails, pass the file
+path when launching the editor. The toolbar does not include manual index or
+snapshot opening buttons.
 
 In Git Bash/UCRT64, use this launch command instead of the PowerShell command:
 
@@ -129,8 +130,9 @@ writing. The active snapshot and index must already be registered in
 `remotecache.vdf`, with sizes/hashes matching the loaded bytes. Missing or stale
 registrations block saving; the tool never invents or rewrites them.
 
-1. Open `characters-index` to resolve the current active save. Use **Open
-   snapshot** only when intentionally exploring an older generation.
+1. Click **Find saves** to load the active save, selecting an account if prompted.
+   To inspect an older snapshot, pass its path when launching the editor;
+   direct apply remains disabled for older snapshots.
 2. Select a character. Owners without a supported CHAR record remain read-only.
 3. Rules load automatically when you first open a save, using Steam's registered
    libraries and Enshrouded install manifest (including secondary drives).

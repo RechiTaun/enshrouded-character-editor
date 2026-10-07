@@ -61,6 +61,26 @@ class UiTests(unittest.TestCase):
         self.assertFalse(self.editor.document.changes)
         self.assertEqual(self.source.read_bytes(), sample())
 
+    def test_toolbar_keeps_discovery_without_manual_open_buttons(self):
+        toolbar = self.editor.character_choice.master
+        labels = [str(widget["text"]) for widget in toolbar.winfo_children()
+                  if "text" in widget.keys()]
+        self.assertEqual(labels, ["Find saves"])
+        button = next(widget for widget in toolbar.winfo_children()
+                      if "text" in widget.keys())
+        with patch("character_editor.discover_saves", return_value=[self.index]) as discover:
+            button.invoke()
+            self.wait_loading()
+        discover.assert_called_once()
+        self.assertEqual(self.editor.document.index_path, self.index)
+
+    def test_empty_discovery_does_not_recommend_removed_buttons(self):
+        with patch("character_editor.messagebox.showinfo") as info:
+            self.editor._found_saves([])
+        self.assertIn("characters-index path", self.editor.status.get())
+        self.assertNotIn("Open active index", self.editor.status.get())
+        info.assert_called_once()
+
     def prepare_sharing(self):
         from test_character_transfer import records, transfer_rules
         values = [(owner, tag,

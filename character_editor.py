@@ -96,10 +96,6 @@ class Editor(ttk.Frame):
                   ).grid(row=1, column=0, sticky="w", pady=(2, 12))
         toolbar = ttk.Frame(self)
         toolbar.grid(row=2, column=0, sticky="ew", pady=(0, 10))
-        ttk.Button(toolbar, text="Open active index...", command=self.open_index
-                   ).pack(side="left")
-        ttk.Button(toolbar, text="Open snapshot...", command=self.open_snapshot
-                   ).pack(side="left", padx=6)
         ttk.Button(toolbar, text="Find saves", command=self.find_saves).pack(side="left")
         self.character_choice = ttk.Combobox(toolbar, state="readonly", width=43)
         self.character_choice.pack(side="right")
@@ -118,7 +114,7 @@ class Editor(ttk.Frame):
                              (explorer, "Records & appearance"), (pending, "Pending changes")):
             notebook.add(frame, text=label)
         character.columnconfigure(1, weight=1)
-        self.summary = tk.StringVar(value="Open characters-index to load the active save.")
+        self.summary = tk.StringVar(value="Click Find saves to load your active character save.")
         ttk.Label(character, textvariable=self.summary, wraplength=900).grid(
             row=0, column=0, columnspan=2, sticky="w", pady=(0, 20))
         self.name = tk.StringVar()
@@ -600,9 +596,10 @@ class Editor(ttk.Frame):
                     fill="x", padx=10, pady=5)
             self.status.set("Select a save account to load.")
         else:
-            self.status.set("No saves found. Use Open active index to choose a folder.")
-            messagebox.showinfo("No saves found", "Use Open active index to choose a folder.",
-                                parent=self.root)
+            hint = ("No saves found. Check your Steam/local save location, or pass the "
+                    "full characters-index path when launching the editor.")
+            self.status.set(hint)
+            messagebox.showinfo("No saves found", hint, parent=self.root)
 
     def load(self, path: Path) -> None:
         if not self.require_idle() or not self.confirm_discard():
