@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.spec
+.env
+.env.*
+*.enshrouded-character
+characters*
+*.tfstate*
+*.pem
+*.key
