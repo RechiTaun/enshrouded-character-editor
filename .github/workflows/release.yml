@@ -50,6 +50,10 @@ jobs:
         env:
           VERSION_BUMP: ${{ inputs.bump }}
         run: python scripts\release_version.py --bump "$env:VERSION_BUMP" --output "$env:GITHUB_OUTPUT"
+      - name: Require curated release notes
+        env:
+          RELEASE_VERSION: ${{ steps.next.outputs.version }}
+        run: python scripts\check_release_notes.py --version "$env:RELEASE_VERSION"
 
   build:
     needs: version
@@ -64,6 +68,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check out curated notes from tested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
       - name: Download verified executable
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
@@ -84,7 +92,8 @@ jobs:
             throw 'Executable checksum verification failed.'
           }
           gh release create "$env:RELEASE_TAG" $exe $checksum `
-            --target "$env:RELEASE_SHA" --title "$env:RELEASE_TAG" --generate-notes --draft
+            --target "$env:RELEASE_SHA" --title "$env:RELEASE_TAG - Enshrouded Character Workshop" `
+            --notes-file "release-notes\$env:RELEASE_TAG.md" --draft
           if ($LASTEXITCODE -ne 0) { throw 'Draft release creation or asset upload failed.' }
           gh release edit "$env:RELEASE_TAG" --draft=false --latest
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed; inspect the draft before retrying.' }
