@@ -322,6 +322,16 @@ class FileTests(unittest.TestCase):
         run.return_value.stdout = "explorer\nenshrouded\n"
         with patch("save_format.os.name", "nt"), self.assertRaises(SaveError):
             assert_game_closed()
+        run.return_value.stdout = "explorer\r\nenshrouded_server\r\n"
+        with patch("save_format.os.name", "nt"), self.assertRaises(SaveError):
+            assert_game_closed()
+
+    @patch("save_format.subprocess.run")
+    def test_process_check_ignores_editor_executable(self, run):
+        run.return_value.stdout = ("explorer\nenshrouded-character-editor-windows-x64\n"
+                                   "enshrouded-character-editor-windows-x64 (2)\n")
+        with patch("save_format.os.name", "nt"):
+            assert_game_closed()
 
 
 @unittest.skipUnless(os.environ.get("ENSHROUDED_TEST_SAVE_DIR"),

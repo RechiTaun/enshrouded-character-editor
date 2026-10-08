@@ -826,6 +826,9 @@ class SaveDocument:
         return backup_directory
 
 
+BLOCKING_PROCESSES = frozenset({"steam", "enshrouded", "enshrouded_server"})
+
+
 def assert_game_closed() -> None:
     if os.name != "nt":
         raise SaveError("Direct apply process checks are supported only on Windows.")
@@ -839,10 +842,11 @@ def assert_game_closed() -> None:
         )
     except (OSError, subprocess.SubprocessError) as exc:
         raise SaveError("Cannot verify running processes. Active save not changed.") from exc
-    names = set(result.stdout.lower().splitlines())
+    names = {line.strip() for line in result.stdout.lower().splitlines() if line.strip()}
     if not names:
         raise SaveError("Process enumeration returned no data; active save not changed.")
-    blocked = sorted(n for n in names if n == "steam" or n.startswith("enshrouded"))
+    # Exact names only: a prefix match would also block this editor's own executable.
+    blocked = sorted(names & BLOCKING_PROCESSES)
     if blocked:
         raise SaveError("Close Steam and Enshrouded before applying: " + ", ".join(blocked))
 
